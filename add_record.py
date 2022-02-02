@@ -35,7 +35,9 @@ class CreateRecord:
         return input(f'date applied (YYYY-MM-DD):\n> ')
 
     def get_last_contact(self):
-        return input(f'date of last contact (YYYY-MM-DD):\n> ')
+        input_ = input(f'date of last contact (YYYY-MM-DD):\n> ')
+        if input_ != '':
+            return input
 
 
 if __name__ == '__main__':
@@ -47,11 +49,10 @@ if __name__ == '__main__':
     # build query
     query = f"""
             INSERT INTO jobs (
-                company, status, date_applied, last_contact
+                company, status, date_applied
             )
             VALUES (
-                '{record.company}', '{record.status}', '{record.date_applied}',
-                '{record.last_contact}'
+                '{record.company}', '{record.status}', '{record.date_applied}'
             );
             """
 

@@ -1,5 +1,6 @@
 # imports
 import psycopg2
+import datetime as dt
 
 # db global variables
 HOST = 'localhost'
@@ -45,7 +46,7 @@ if __name__ == '__main__':
     record = UpdateRecord()
 
     query = f'''UPDATE {record.table}
-                SET {record.column} = '{record.value}'
+                SET {record.column} = '{record.value}', last_contact = '{dt.date.today()}'
                 WHERE company = '{record.company}'
     '''
 

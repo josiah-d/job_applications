@@ -1,6 +1,7 @@
 # imports
-import psycopg2
 import datetime as dt
+
+import psycopg2
 
 # db global variables
 HOST = 'localhost'
@@ -17,17 +18,16 @@ conn = psycopg2.connect(host=HOST, database=DATABASE,
 print('Database connected.')
 
 
-class UpdateRecord:
+class UpdateRecord():
     """Updates a job entry to add to the database"""
 
-    def __init__(self):
-        self.table = self.get_table()
-        self.company = self.get_company()
-        self.column = self.get_column()
-        self.value = self.get_value()
-
-    def get_table(self):
-        return input('enter the table name to update:\n> ')
+    def __init__(self, last_contact=False):
+        if last_contact:
+            self.company = self.get_company()
+        else:
+            self.company = self.get_company()
+            self.column = self.get_column()
+            self.value = self.get_value()
 
     def get_company(self):
         return input('enter the company name to update:\n> ')
@@ -41,19 +41,27 @@ class UpdateRecord:
 
 if __name__ == '__main__':
     print('Please provide inputs.\n')
-
     # get inputs
-    record = UpdateRecord()
 
-    query = f'''UPDATE {record.table}
-                SET {record.column} = '{record.value}', last_contact = '{dt.date.today()}'
-                WHERE company = '{record.company}'
-    '''
+    contact_date = input('Update last contact date? (y/n)\n> ')
+
+    if contact_date.lower() == 'y':
+        record = UpdateRecord(last_contact=True)
+        query = f'''UPDATE jobs 
+                    SET last_contact = '{dt.date.today()}'
+                    WHERE company = '{record.company}'
+        '''
+        print(f'{record.company} record updated: last_contact {dt.date.today()}.')
+    else:
+        record = UpdateRecord()
+        query = f'''UPDATE jobs
+                    SET {record.column} = '{record.value}', last_contact = '{dt.date.today()}'
+                    WHERE company = '{record.company}'
+        '''
+        print(f'{record.company} record updated: {record.column} == {record.value}.')
 
     # push data to the database
     with conn.cursor() as c:
         c.execute(query)
 
     conn.commit()
-
-    print(f'{record.company} record updated: {record.column} == {record.value}.')
